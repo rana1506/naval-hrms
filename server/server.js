@@ -4,6 +4,9 @@ import cors from "cors";
 import morgan from "morgan";
 import { connectDB } from "./config/db.js";
 import { RBAC } from "./config/rbac.js";
+import authRoutes from "./routes/auth.routes.js";
+import userRoutes from "./routes/user.routes.js";
+
 
 // Load environment
 dotenv.config();
@@ -22,6 +25,7 @@ connectDB();
 
 // Routes (added in later modules)
 app.get("/", (req, res) => res.send("Naval HRMS API running"));
-
+app.use("/auth", authRoutes);
+app.use("/users", userRoutes);
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
