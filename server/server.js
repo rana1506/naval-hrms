@@ -12,6 +12,11 @@ import deptRoutes from "./routes/department.routes.js";
 import divisionRoutes from "./routes/division.routes.js";
 
 
+import profileRoutes from "./routes/profile.routes.js";
+import leaveRoutes from "./routes/leave.routes.js";
+import welfareRoutes from "./routes/welfare.routes.js";
+import promotionRoutes from "./routes/promotion.routes.js";
+
 // Load environment
 dotenv.config();
 
@@ -37,6 +42,11 @@ app.use("/users", userRoutes);
 app.use("/departments", deptRoutes);
 app.use("/divisions", divisionRoutes);
 
+
+app.use("/profile", profileRoutes);
+app.use("/leave", leaveRoutes);
+app.use("/welfare", welfareRoutes);
+app.use("/promotion", promotionRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
