@@ -1,7 +1,10 @@
 /**
- * Naval HRMS Single-File Seeder
- * Run with:
- *   node seed.js
+ * Naval HRMS Seeder with:
+ * - Departments
+ * - Divisions auto-linked to DOs
+ * - Officers + Department Heads
+ * - Random Sailors
+ * - Auto-distribute sailors into divisions
  */
 
 import dotenv from "dotenv";
@@ -16,40 +19,60 @@ import Department from "./models/Department.js";
 import Division from "./models/Division.js";
 import User from "./models/User.js";
 
+const RANDOM_SAILOR_COUNT = 50;   // <--- adjust this as needed
+
+// Random name parts for sailor generator
+const FIRST_NAMES = ["John", "David", "Mark", "Paul", "James", "Robert", "Daniel", "Joseph", "Alex"];
+const LAST_NAMES = ["Nelson", "Boatman", "Carter", "Hughes", "Jackson", "Brooks", "Foster", "Bennett", "Gray"];
+const RANKS = ["Able Seaman", "Leading Seaman", "Ordinary Seaman"];
+
+const randomItem = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+const generateRandomSailors = async (count, pwd) => {
+  const sailors = [];
+
+  for (let i = 1; i <= count; i++) {
+    const fullName = `${randomItem(FIRST_NAMES)} ${randomItem(LAST_NAMES)}`;
+    sailors.push({
+      serviceNo: `RS${String(i).padStart(3, "0")}`,
+      rank: randomItem(RANKS),
+      fullName,
+      passwordHash: pwd,
+      roles: [ROLES.SAILOR],
+      status: "approved",
+      department: null,     // assigned later or by RO
+      division: null        // assigned later
+    });
+  }
+
+  return sailors;
+};
+
 const run = async () => {
   try {
     console.log("Connecting to database...");
     await connectDB();
 
     console.log("Clearing old collections...");
-    await Promise.all([
-      Department.deleteMany(),
-      Division.deleteMany(),
-      User.deleteMany()
-    ]);
+    await Department.deleteMany();
+    await Division.deleteMany();
+    await User.deleteMany();
 
     console.log("Seeding departments...");
-    const deptNames = [
-      "Engineering",
-      "Electrical",
-      "Supply",
-      "Medical",
-      "Executive"
-    ];
-    const departments = await Department.insertMany(
-      deptNames.map((d) => ({ name: d }))
-    );
+    const deptNames = ["Engineering", "Electrical", "Supply", "Medical", "Executive"];
+    await Department.insertMany(deptNames.map((d) => ({ name: d })));
 
     console.log("Seeding divisions...");
     const divisionNames = ["Alpha Division", "Bravo Division", "Charlie Division"];
-    const divisions = await Division.insertMany(
+    let divisions = await Division.insertMany(
       divisionNames.map((d) => ({ name: d }))
     );
 
     console.log("Seeding users...");
     const pwd = await hashPassword("Password123");
 
-    const users = [
+    const baseUsers = [
+      // HQ Staff
       {
         serviceNo: "CO001",
         rank: "Captain",
@@ -66,6 +89,8 @@ const run = async () => {
         roles: [ROLES.ADMIN],
         status: "approved"
       },
+
+      // Core Officers
       {
         serviceNo: "XO001",
         rank: "Commander",
@@ -90,6 +115,8 @@ const run = async () => {
         roles: [ROLES.GO],
         status: "approved"
       },
+
+      // Department Heads
       {
         serviceNo: "EO001",
         rank: "Lieutenant Commander",
@@ -127,30 +154,73 @@ const run = async () => {
         department: "Medical"
       },
 
-      // Sample Sailors
+      // Divisional Officers (DOs)
       {
-        serviceNo: "S001",
-        rank: "Leading Seaman",
-        fullName: "John Sailor",
+        serviceNo: "DO001",
+        rank: "Sub Lieutenant",
+        fullName: "Divisional Officer 1",
         passwordHash: pwd,
-        roles: [ROLES.SAILOR],
-        status: "approved",
-        department: "Engineering"
+        roles: [ROLES.DO],
+        status: "approved"
       },
       {
-        serviceNo: "S002",
-        rank: "Able Seaman",
-        fullName: "David Boatswain",
+        serviceNo: "DO002",
+        rank: "Sub Lieutenant",
+        fullName: "Divisional Officer 2",
         passwordHash: pwd,
-        roles: [ROLES.SAILOR],
-        status: "approved",
-        department: "Executive"
+        roles: [ROLES.DO],
+        status: "approved"
+      },
+      {
+        serviceNo: "DO003",
+        rank: "Sub Lieutenant",
+        fullName: "Divisional Officer 3",
+        passwordHash: pwd,
+        roles: [ROLES.DO],
+        status: "approved"
       }
     ];
 
-    await User.insertMany(users);
+    // Insert officers
+    const officerDocs = await User.insertMany(baseUsers);
 
-    console.log("All seed data inserted successfully!");
+    console.log(`Generating ${RANDOM_SAILOR_COUNT} random sailors...`);
+    const randomSailors = await generateRandomSailors(RANDOM_SAILOR_COUNT, pwd);
+
+    // Insert random sailors
+    const sailorDocs = await User.insertMany(randomSailors);
+
+    console.log("Auto-linking DOs to divisions...");
+
+    const doUsers = officerDocs.filter((u) => u.roles.includes(ROLES.DO));
+    if (doUsers.length === 0) throw new Error("No DOs found!");
+
+    for (let i = 0; i < divisions.length; i++) {
+      const division = divisions[i];
+      const doOfficer = doUsers[i % doUsers.length]; // round-robin assignment
+
+      division.divisionalOfficerId = doOfficer._id;
+      await division.save();
+    }
+
+    console.log("Distributing sailors into divisions...");
+
+    let updatedDivisions = await Division.find();
+    let updatedSailors = await User.find({ roles: ROLES.SAILOR });
+
+    for (let i = 0; i < updatedSailors.length; i++) {
+      const sailor = updatedSailors[i];
+      const division = updatedDivisions[i % updatedDivisions.length];
+
+      sailor.division = division._id;
+      await sailor.save();
+
+      division.sailors.push(sailor._id);
+      await division.save();
+    }
+
+    console.log("Random sailors distributed evenly across divisions.");
+    console.log("Seed complete.");
     process.exit(0);
 
   } catch (err) {
