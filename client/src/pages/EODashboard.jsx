@@ -1,5 +1,5 @@
 import DepartmentHeadDashboard from "../components/DepartmentHeadDashboard";
 
-export default function LODashboard() {
-  return <DepartmentHeadDashboard departmentName="Electrical" />;
+export default function EODashboard() {
+  return <DepartmentHeadDashboard departmentName="Engineering" />;
 }
