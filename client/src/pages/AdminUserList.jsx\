@@ -1,0 +1,21 @@
+import { useEffect, useState } from "react";
+import axios from "../api/axios";
+
+export default function AdminUserList() {
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    axios.get("/users/pending").then(res => setUsers(res.data));
+  }, []);
+
+  return (
+    <div className="card">
+      <h3>Pending Users</h3>
+      {users.map(u => (
+        <div key={u._id} className="card">
+          <p>{u.serviceNo} - {u.fullName}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
