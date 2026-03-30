@@ -1,5 +1,7 @@
 import DepartmentHeadDashboard from "../components/DepartmentHeadDashboard";
 
 export default function XODepartmentDashboard() {
-  return <DepartmentHeadDashboard departmentName="Executive" />;
+  return (
+    <DepartmentHeadDashboard departmentName="Executive" />
+  );
 }

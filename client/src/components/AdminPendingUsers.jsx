@@ -2,25 +2,25 @@ import { useEffect, useState } from "react";
 import axios from "../api/axios";
 import { useNavigate } from "react-router-dom";
 
-export default function AdminDivisionList() {
-  const [divisions, setDivisions] = useState([]);
+export default function AdminPendingUsers() {
+  const [users, setUsers] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get("/divisions").then(res => setDivisions(res.data));
+    axios.get("/users/pending").then(res => setUsers(res.data));
   }, []);
 
   return (
     <div className="card">
-      <h3>Divisions</h3>
-      {divisions.map(div => (
+      <h3>Pending Users</h3>
+      {users.map(u => (
         <div
-          key={div._id}
+          key={u._id}
           className="card"
-          onClick={() => navigate(`/division/${div._id}`)}
+          onClick={() => navigate(`/profile/view/${u._id}`)}
           style={{ cursor: "pointer" }}
         >
-          <p>{div.name}</p>
+          <p>{u.serviceNo} — {u.fullName} ({u.roles.join(", ")})</p>
         </div>
       ))}
     </div>

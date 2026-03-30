@@ -3,18 +3,26 @@ import DOEditSailor from "./DOEditSailor";
 import DOLeaveControl from "./DOLeaveControl";
 import DOWelfareControl from "./DOWelfareControl";
 import DOPromotionControl from "./DOPromotionControl";
+import { useNavigate } from "react-router-dom";
 
 export default function DOSailorCard({ sailor }) {
-  const [expanded, setExpanded] = useState(false);
+  const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <div className="card">
-      <p>{sailor.fullName} — {sailor.rank}</p>
-      <button onClick={() => setExpanded(!expanded)}>
-        {expanded ? "Hide" : "Manage"}
+      <p 
+        style={{ cursor: "pointer", color: "blue" }}
+        onClick={() => navigate(`/profile/view/${sailor._id}`)}
+      >
+        {sailor.fullName} — {sailor.rank}
+      </p>
+
+      <button onClick={() => setOpen(!open)}>
+        {open ? "Hide" : "Manage"}
       </button>
 
-      {expanded && (
+      {open && (
         <div>
           <DOEditSailor sailor={sailor} />
           <DOLeaveControl sailorId={sailor._id} />

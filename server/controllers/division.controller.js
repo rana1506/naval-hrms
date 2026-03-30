@@ -77,3 +77,19 @@ export const getAllDivisions = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+export const getDivisionById = async (req, res) => {
+  try {
+    const division = await Division.findById(req.params.divisionId)
+      .populate("sailors", "-passwordHash")
+      .populate("divisionalOfficerId", "-passwordHash");
+
+    if (!division) {
+      return res.status(404).json({ message: "Division not found" });
+    }
+
+    res.json(division);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};

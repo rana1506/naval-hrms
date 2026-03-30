@@ -17,6 +17,7 @@ import leaveRoutes from "./routes/leave.routes.js";
 import welfareRoutes from "./routes/welfare.routes.js";
 import promotionRoutes from "./routes/promotion.routes.js";
 
+import sailorRoutes from "./routes/sailor.routes.js";
 // Load environment
 dotenv.config();
 
@@ -47,6 +48,8 @@ app.use("/profile", profileRoutes);
 app.use("/leave", leaveRoutes);
 app.use("/welfare", welfareRoutes);
 app.use("/promotion", promotionRoutes);
+
+app.use("/sailor", sailorRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

@@ -6,10 +6,20 @@ import {
   createDivision,
   assignSailorToDivision,
   getDivisionSailors,
-  getAllDivisions
+  getAllDivisions,
+  getDivisionById 
 } from "../controllers/division.controller.js";
 
 const router = express.Router();
+
+
+router.get(
+  "/:divisionId",
+  protect,
+  checkAccess("division", "view"),
+  getDivisionById
+);
+
 
 // Admin / CO create division
 router.post(

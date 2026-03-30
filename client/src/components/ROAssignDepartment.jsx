@@ -1,26 +1,31 @@
 import { useState } from "react";
-import axios from "../api/axios";
 
-export default function ROAssignDepartment({ sailorId, onAssigned }) {
-  const [department, setDepartment] = useState("");
-
-  const assign = async () => {
-    if (!department) return;
-    await axios.patch(`/users/approve/sailor/${sailorId}`, {
-      department,
-    });
-    if (onAssigned) onAssigned(sailorId);
-  };
+export default function ROAssignDepartment({ sailor, departments, onAssign }) {
+  const [selectedDept, setSelectedDept] = useState("");
 
   return (
     <div className="card">
-      <h4>Assign Department</h4>
-      <input
-        placeholder="Department Name"
-        value={department}
-        onChange={(e) => setDepartment(e.target.value)}
-      />
-      <button onClick={assign}>Assign</button>
+      <h4>Assign Department to {sailor.fullName}</h4>
+
+      <select
+        value={selectedDept}
+        onChange={(e) => setSelectedDept(e.target.value)}
+      >
+        <option value="">Select Department</option>
+        {departments.map((d) => (
+          <option key={d._id} value={d.name}>
+            {d.name}
+          </option>
+        ))}
+      </select>
+
+      <button
+        onClick={() => {
+          if (selectedDept) onAssign(sailor._id, selectedDept);
+        }}
+      >
+        Approve & Assign
+      </button>
     </div>
   );
 }

@@ -55,3 +55,13 @@ export const getAllPending = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+// Admin can view all users
+export const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find().select("-passwordHash");
+    res.json(users);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};

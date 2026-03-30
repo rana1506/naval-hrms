@@ -1,9 +1,13 @@
 import { useEffect, useState } from "react";
 import axios from "../api/axios";
+import { useNavigate } from "react-router-dom";
+import ROPendingSailorList from "../components/ROPendingSailorList";
+import ROAssignDepartment from "../components/ROAssignDepartment";
 
 export default function RODashboard() {
   const [pendingSailors, setPendingSailors] = useState([]);
   const [departments, setDepartments] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     axios.get("/users/pending").then((res) => {
@@ -14,34 +18,41 @@ export default function RODashboard() {
     axios.get("/departments").then((res) => setDepartments(res.data));
   }, []);
 
-  const approveSailor = async (id) => {
-    const dept = prompt("Assign department:");
-    if (!dept) return;
+  const assignDept = async (sailorId, departmentName) => {
+    await axios.patch(`/users/approve/sailor/${sailorId}`, {
+      department: departmentName,
+    });
 
-    await axios.patch(`/users/approve/sailor/${id}`, { department: dept });
-
-    setPendingSailors((prev) => prev.filter((s) => s._id !== id));
+    setPendingSailors((prev) => prev.filter((s) => s._id !== sailorId));
   };
 
   return (
     <div className="card">
       <h2>Regulating Officer (RO) Dashboard</h2>
 
-      <h3>Pending Sailor Approvals</h3>
+      <ROPendingSailorList
+        sailors={pendingSailors}
+        onClickSailor={(id) => navigate(`/profile/view/${id}`)}
+      />
+
+      <h3>Assign Department</h3>
       {pendingSailors.map((s) => (
-        <div key={s._id} className="card">
-          <p>
-            {s.fullName} — {s.rank}
-          </p>
-          <button onClick={() => approveSailor(s._id)}>
-            Approve & Assign Dept
-          </button>
-        </div>
+        <ROAssignDepartment
+          key={s._id}
+          sailor={s}
+          departments={departments}
+          onAssign={assignDept}
+        />
       ))}
 
       <h3>Departments</h3>
       {departments.map((d) => (
-        <div key={d._id} className="card">
+        <div
+          key={d._id}
+          className="card"
+          onClick={() => navigate(`/department/${d.name}`)}
+          style={{ cursor: "pointer" }}
+        >
           <p>{d.name}</p>
         </div>
       ))}

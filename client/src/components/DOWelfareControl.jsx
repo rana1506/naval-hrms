@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import axios from "../api/axios";
 
 export default function DOWelfareControl({ sailorId }) {
@@ -36,16 +36,17 @@ export default function DOWelfareControl({ sailorId }) {
       ))}
 
       <h4>Add New Case</h4>
-      <input
-        placeholder="Issue"
-        value={issue}
-        onChange={(e) => setIssue(e.target.value)}
+      <input 
+        placeholder="Issue" 
+        value={issue} 
+        onChange={(e) => setIssue(e.target.value)} 
       />
-      <input
-        placeholder="Remarks"
-        value={remarks}
-        onChange={(e) => setRemarks(e.target.value)}
+      <input 
+        placeholder="Remarks" 
+        value={remarks} 
+        onChange={(e) => setRemarks(e.target.value)} 
       />
+
       <button onClick={addCase}>Add</button>
     </div>
   );

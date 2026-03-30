@@ -4,10 +4,14 @@ import { checkAccess } from "../middleware/checkAccess.js";
 import {
   approveOfficer,
   approveSailor,
-  getAllPending
+  getAllPending,
+  getAllUsers 
 } from "../controllers/user.controller.js";
 
 const router = express.Router();
+
+// Admin can view all users
+router.get("/", protect, checkAccess("user", "view-all"), getAllUsers);
 
 // XO approves officers
 router.patch(

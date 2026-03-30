@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import axios from "../api/axios";
 
 export default function DOPromotionControl({ sailorId }) {
@@ -37,6 +37,7 @@ export default function DOPromotionControl({ sailorId }) {
         value={remarks}
         onChange={(e) => setRemarks(e.target.value)}
       />
+
       <button onClick={recommend}>Submit</button>
     </div>
   );

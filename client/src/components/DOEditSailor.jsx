@@ -8,17 +8,25 @@ export default function DOEditSailor({ sailor }) {
   const update = async () => {
     await axios.patch(`/profile/edit/${sailor._id}`, {
       rank,
-      fullName,
+      fullName
     });
-    alert("Profile updated");
+    alert("Profile updated.");
   };
 
   return (
     <div className="card">
       <h4>Edit Profile</h4>
-      <input value={rank} onChange={(e) => setRank(e.target.value)} />
-      <input value={fullName} onChange={(e) => setFullName(e.target.value)} />
-      <button onClick={update}>Update</button>
+
+      <input 
+        value={rank} 
+        onChange={(e) => setRank(e.target.value)} 
+      />
+      <input 
+        value={fullName} 
+        onChange={(e) => setFullName(e.target.value)} 
+      />
+
+      <button onClick={update}>Save</button>
     </div>
   );
 }

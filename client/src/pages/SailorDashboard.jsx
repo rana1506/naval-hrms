@@ -22,9 +22,9 @@ export default function SailorDashboard() {
       <p>Welcome, {user.fullName}</p>
 
       <SailorProfile profile={profile} />
-      <SailorLeave />
-      <SailorWelfare />
-      <SailorPromotions />
+      <SailorLeave sailorId={profile._id} />
+      <SailorWelfare sailorId={profile._id} />
+      <SailorPromotions sailorId={profile._id} />
     </div>
   );
 }

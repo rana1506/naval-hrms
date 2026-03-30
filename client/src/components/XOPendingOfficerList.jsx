@@ -1,23 +1,18 @@
-// src/components/XOPendingOfficerList.jsx
-import { useEffect, useState } from "react";
-import axios from "../api/axios";
-
-export default function XOPendingOfficerList() {
-  const [pendingOfficers, setPendingOfficers] = useState([]);
-
-  useEffect(() => {
-    axios.get("/users/pending").then((res) => {
-      const officers = res.data.filter((u) => u.roles.includes("officer"));
-      setPendingOfficers(officers);
-    });
-  }, []);
-
+export default function XOPendingOfficerList({ officers, onClickOfficer }) {
   return (
     <div className="card">
-      <h3>Pending Officers</h3>
-      {pendingOfficers.map((o) => (
-        <div key={o._id} className="card">
-          <p>{o.fullName}</p>
+      <h3>Pending Officer Approvals</h3>
+
+      {officers.length === 0 && <p>No pending officers.</p>}
+
+      {officers.map((o) => (
+        <div
+          key={o._id}
+          className="card"
+          onClick={() => onClickOfficer(o._id)}
+          style={{ cursor: "pointer" }}
+        >
+          <p>{o.fullName} — {o.rank}</p>
         </div>
       ))}
     </div>

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "../api/axios";
 
-export default function SailorLeave() {
+export default function SailorLeave({ sailorId }) {
   const [leaveList, setLeaveList] = useState([]);
   const [form, setForm] = useState({
     fromDate: "",
@@ -10,12 +10,14 @@ export default function SailorLeave() {
   });
 
   useEffect(() => {
-    axios.get("/leave/my").then(res => setLeaveList(res.data));
+    axios.get("/leave/my")
+      .then(res => setLeaveList(res.data))
+      .catch(() => {});
   }, []);
 
-  const requestLeave = async () => {
-    await axios.post("/leave/request", form);
-    setLeaveList(prev => [...prev, form]);
+  const submitLeave = async () => {
+    const res = await axios.post("/leave/request", form);
+    setLeaveList(prev => [...prev, res.data.leave]);
     setForm({ fromDate: "", toDate: "", reason: "" });
   };
 
@@ -32,22 +34,24 @@ export default function SailorLeave() {
       ))}
 
       <h4>Request Leave</h4>
+
       <input
         type="date"
         value={form.fromDate}
-        onChange={e => setForm({ ...form, fromDate: e.target.value })}
+        onChange={(e) => setForm({ ...form, fromDate: e.target.value })}
       />
       <input
         type="date"
         value={form.toDate}
-        onChange={e => setForm({ ...form, toDate: e.target.value })}
+        onChange={(e) => setForm({ ...form, toDate: e.target.value })}
       />
       <input
         placeholder="Reason"
         value={form.reason}
-        onChange={e => setForm({ ...form, reason: e.target.value })}
+        onChange={(e) => setForm({ ...form, reason: e.target.value })}
       />
-      <button onClick={requestLeave}>Submit</button>
+
+      <button onClick={submitLeave}>Submit</button>
     </div>
   );
 }

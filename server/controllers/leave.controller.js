@@ -40,3 +40,14 @@ export const updateLeaveStatus = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+// Get leave by sailor ID (for DO to view)
+export const getLeaveBySailor = async (req, res) => {
+  try {
+    const { sailorId } = req.params;
+    const leaves = await Leave.find({ sailorId });
+    res.json(leaves);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};  

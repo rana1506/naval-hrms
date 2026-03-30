@@ -5,7 +5,8 @@ import { checkAccess } from "../middleware/checkAccess.js";
 import {
   requestLeave,
   viewMyLeave,
-  updateLeaveStatus
+  updateLeaveStatus,
+  getLeaveBySailor 
 } from "../controllers/leave.controller.js";
 
 const router = express.Router();
@@ -30,5 +31,14 @@ router.patch(
   checkAccess("division", "manage"),
   updateLeaveStatus
 );
+
+
+router.get(
+  "/sailor/:sailorId",
+  protect,
+  checkAccess("sailor", "view"),
+  getLeaveBySailor
+);
+
 
 export default router;

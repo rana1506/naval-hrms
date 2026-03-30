@@ -12,7 +12,7 @@ export default function GOAssignDivision({ sailorId, divisions }) {
       divisionId,
     });
 
-    alert("Sailor assigned");
+    alert("Sailor assigned to division");
   };
 
   return (
@@ -28,7 +28,8 @@ export default function GOAssignDivision({ sailorId, divisions }) {
           </option>
         ))}
       </select>
-      <button onClick={assign}>Assign to Division</button>
+      
+      <button onClick={assign}>Assign</button>
     </div>
   );
 }

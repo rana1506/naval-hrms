@@ -1,20 +1,16 @@
-// src/components/XODivisionOverview.jsx
-import { useEffect, useState } from "react";
-import axios from "../api/axios";
-
-export default function XODivisionOverview() {
-  const [divisions, setDivisions] = useState([]);
-
-  useEffect(() => {
-    axios.get("/divisions").then((res) => setDivisions(res.data));
-  }, []);
-
+export default function XODivisionOverview({ divisions, onClickDiv }) {
   return (
     <div className="card">
-      <h3>Division Overview</h3>
-      {divisions.map((d) => (
-        <div key={d._id} className="card">
-          <p>{d.name}</p>
+      <h3>Divisions Overview</h3>
+
+      {divisions.map((div) => (
+        <div
+          key={div._id}
+          className="card"
+          onClick={() => onClickDiv(div._id)}
+          style={{ cursor: "pointer" }}
+        >
+          <p>{div.name}</p>
         </div>
       ))}
     </div>
