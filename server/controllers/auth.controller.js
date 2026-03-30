@@ -54,7 +54,10 @@ export const signupSailor = async (req, res) => {
 };
 
 // Login
-export const login = async (req, res) => {
+export const login = async (req, res) => { console.log("Login attempt", {
+  serviceNo: req.body.serviceNo,
+  password: req.body.password ? "****" : null
+});
   try {
     const { serviceNo, password } = req.body;
 

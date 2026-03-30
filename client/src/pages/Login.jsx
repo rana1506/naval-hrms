@@ -10,8 +10,13 @@ export default function Login() {
 
   const submit = async (e) => {
     e.preventDefault();
-    await login(serviceNo, password);
-    navigate("/dashboard");
+    try {
+      await login(serviceNo, password);
+      navigate("/dashboard");
+    } catch (error) {
+      console.error("Login failed:", error);
+      alert(error.response?.data?.message || error.message || "Login failed");
+    }
   };
 
   return (

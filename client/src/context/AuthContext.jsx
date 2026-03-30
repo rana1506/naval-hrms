@@ -16,11 +16,22 @@ export const AuthProvider = ({ children }) => {
   }, [token]);
 
   const login = async (serviceNo, password) => {
-    const res = await axios.post("/auth/login", { serviceNo, password });
-    setToken(res.data.token);
-    localStorage.setItem("token", res.data.token);
-    setUser(res.data.user);
-    return res.data.user;
+    try {
+      const res = await axios.post("/auth/login", { serviceNo, password });
+      setToken(res.data.token);
+      localStorage.setItem("token", res.data.token);
+      setUser(res.data.user);
+      return res.data.user;
+    } catch (error) {
+      console.error("Auth login failed", {
+        url: "/auth/login",
+        baseURL: axios.defaults.baseURL,
+        message: error.message,
+        code: error.code,
+        response: error.response?.data,
+      });
+      throw error;
+    }
   };
 
   const logout = () => {

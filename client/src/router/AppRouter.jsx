@@ -10,6 +10,7 @@ import SignupSailor from "../pages/SignupSailor";
 import NotFound from "../pages/NotFound";
 
 // Dashboards
+import Dashboard from "../pages/Dashboard";
 import AdminDashboard from "../pages/AdminDashboard";
 import CODashboard from "../pages/CODashboard";
 import XODashboard from "../pages/XODashboard";
@@ -36,6 +37,16 @@ export default function AppRouter() {
         <Route path="/signup/sailor" element={<SignupSailor />} />
 
         {/* Protected Routes */}
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+                <MainLayout>
+                  <Dashboard />
+                </MainLayout>
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/dashboard/admin"
           element={
